@@ -1,0 +1,10 @@
+name = "NaturalStrings"
+uuid = "e1b1784c-29d4-11e9-2bfc-4995028360df"
+authors = ["Per Rutquist <per.rutquist@gmail.com>"]
+version = "0.1.0"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
