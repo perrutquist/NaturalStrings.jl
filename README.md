@@ -38,6 +38,8 @@ The `NaturalString` type is just a thin wrapper. Parsing takes place each time t
 
 The minus sign (`-`) and the period (`.`) are treated as a characters rather than parts of numbers, so `NaturalString("item-9")` sorts before `NaturalString("item-10")` and  `NaturalString("v0.9")` sorts before `NaturalString("v0.10")`.
 
+Numbers are compared numerically, ignoring leading zeros. Therefore `NaturalString("S1E1") == NaturalString("S01E01")`. Use `===` to test for identical strings.
+
 Indexing into a `NaturalString` is done in terms of code units, just as with a `String`. The difference is that digits count as code units that combine into `NumberChar`s, so indexing into the middle of a number will give a `StringIndexError`.
 
 There is currently no support for numbers in bases other than 10.
