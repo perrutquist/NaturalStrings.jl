@@ -10,28 +10,36 @@ For a package that has a chance of working, see: https://github.com/simonster/Na
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/perrutquist/NaturalStrings.jl?svg=true)](https://ci.appveyor.com/project/perrutquist/NaturalStrings-jl)
 [![Codecov](https://codecov.io/gh/perrutquist/NaturalStrings.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/perrutquist/NaturalStrings.jl)
 
-NaturalStrings is a Julia package for treating numbers in strings as if they were single "characters".
+NaturalStrings is a Julia package for arranging strings in a [natural sort order](https://en.wikipedia.org/wiki/Natural_sort_order) where "a" sorts before "B" and "item 9" sorts before "item 10".
 
-This allows for a [natural sort order](https://en.wikipedia.org/wiki/Natural_sort_order) where `NaturalString("item 9")` sorts before `NaturalString("item 10")`.
+Iterating over a `NaturalString` will yield `NaturalChar`s. The `NaturalChar` type is a wrapper for either a character (graphmeme) or a `Substring` representing a number (which is treated as if it were a single "character").
 
-Iterating over a `NaturalString{S,T}` will yield `Char` for characters and `T` for numbers, where `T` can either be an `Integer` type or `SubString`. The latter is the default, and works with numbers of any length. (`S` is the type of the wrapped `AbstractString`.)
+In sorting, `NaturalChar`s compare alphabetically first. Accents and case only matter for otherwise identical letters. Numbers are sorted numerically and sort before all other characters.
 
 The `length` of a `NaturalString` is computed counting all-digit substrings as single characters. It can therefore be smaller than the length of the wrapped string.
 
 ## Examples
 
 ```julia
-julia> sort(["a100", "a10", "a11", "a9"], by=NaturalString)
+julia> sort(["B", "a100", "a10", "a11", "á10", "a9"], by=NaturalString)
+```
+
+```julia
+julia> for c in NaturalString("S10E01")
+           println(c)
+       end
 ```
 
 ## Performance
 
-The `NaturalString` type is just a thin wrapper. Parsing takes place each time that the string is iterated over. Therefore indexing operations (`s[i]`) should be avoided in favour of iteration (`for x in s`).
+The `NaturalString` type is just a thin wrapper. Parsing takes place each time that the string is iterated over.
 
 ## Notes
 
 The minus sign (`-`) and the period (`.`) are treated as a characters rather than parts of numbers, so `NaturalString("item-9")` sorts before `NaturalString("item-10")` and  `NaturalString("v0.9")` sorts before `NaturalString("v0.10")`.
 
+Indexing into a `NaturalString` is done in terms of code units, just as with a `String`. The difference is that digits count as code units that combine into `NumberChar`s, so indexing into the middle of a number will give a `StringIndexError`.
+
 There is currently no support for numbers in bases other than 10.
 
-There is currently no i18n support (e.g. digits other than `0` ... `9`).
+Also, There is currently not much i18n support (e.g. digits other than the ones for which `isdigit` returns `true`).
